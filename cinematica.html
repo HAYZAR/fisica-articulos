@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leer el movimiento sin ecuaciones — Física 10°</title>
+<style>
+  :root{
+    --ink:#1a1208;--paper:#fdf9f4;--cream:#f5edd8;
+    --azul:#1a4a8a;--rojo:#c0392b;--verde:#1a7a6e;
+    --naranja:#e67e22;--gold:#d4a017;--rail:#1a1a2e;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);
+        font-family:'Georgia','Times New Roman',serif;
+        font-size:17px;line-height:1.8;overflow-x:hidden}
+
+  /* HERO */
+  .hero{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);
+         color:white;padding:64px 8vw 52px;position:relative;overflow:hidden}
+  .hero::after{content:'';position:absolute;inset:0;
+    background:repeating-linear-gradient(90deg,transparent,transparent 80px,rgba(255,255,255,.025) 80px,rgba(255,255,255,.025) 82px),
+               repeating-linear-gradient(0deg,transparent,transparent 80px,rgba(255,255,255,.025) 80px,rgba(255,255,255,.025) 82px)}
+  .hero-tag{font-family:monospace;font-size:10px;letter-spacing:4px;color:var(--gold);
+             margin-bottom:14px;display:block;position:relative;z-index:1}
+  .hero h1{font-size:clamp(2rem,4.5vw,3.6rem);font-weight:900;line-height:1.05;
+             margin-bottom:18px;position:relative;z-index:1}
+  .hero h1 em{color:var(--gold);font-style:italic}
+  .hero p{color:#c8c8d8;max-width:580px;font-size:1rem;position:relative;z-index:1;margin-bottom:28px}
+  .hero-meta{font-family:monospace;font-size:10px;color:#6677aa;position:relative;z-index:1}
+
+  /* OBJETIVOS */
+  .objetivos{background:var(--cream);padding:44px 8vw;border-bottom:2px solid #e8dcc8}
+  .objetivos h2{font-size:1.4rem;color:var(--rail);margin-bottom:18px}
+  .obj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:16px}
+  .obj-item{background:white;border-radius:10px;padding:14px 18px;
+             border-left:4px solid var(--gold);font-size:.88rem;line-height:1.6}
+  .obj-num{font-family:monospace;font-size:.68rem;color:var(--gold);
+            letter-spacing:2px;margin-bottom:5px}
+
+  /* CONTENIDO */
+  .article{max-width:800px;margin:0 auto;padding:56px 24px}
+  .seccion{margin-bottom:64px}
+  .seccion-tag{font-family:monospace;font-size:9px;letter-spacing:4px;
+               color:var(--gold);text-transform:uppercase;margin-bottom:8px;display:block}
+  .seccion h2{font-size:1.8rem;color:var(--rail);margin-bottom:6px;line-height:1.15}
+  .seccion h2::before{content:'';display:block;width:32px;height:3px;
+                       background:var(--gold);border-radius:2px;margin-bottom:10px}
+  .seccion-sub{color:#7a6a5a;font-size:.93rem;font-style:italic;margin-bottom:24px}
+
+  /* DIÁLOGOS */
+  .dialogo{background:#f0f4ff;border-radius:14px;padding:26px;
+             border:1px solid #c8d4f0;margin:26px 0}
+  .dialogo-tag{font-family:monospace;font-size:9px;letter-spacing:3px;
+               color:var(--azul);margin-bottom:16px;display:block}
+  .speech{display:flex;gap:11px;margin-bottom:14px;align-items:flex-start}
+  .speech.right{flex-direction:row-reverse}
+  .sp-av{flex-shrink:0;width:36px;height:36px;border-radius:50%;
+          display:flex;align-items:center;justify-content:center;
+          font-weight:700;font-size:14px;color:white}
+  .av-p{background:#2c5f8a}.av-d{background:#1a7a6e}
+  .bubble{padding:12px 16px;border-radius:16px;max-width:84%;
+           font-size:.9rem;line-height:1.65;background:white;
+           border:1px solid #dde4f5}
+  .speech .bubble{border-top-left-radius:4px}
+  .speech.right .bubble{border-top-right-radius:4px;border-top-left-radius:16px}
+
+  /* GRÁFICO */
+  .grafico-wrap{margin:28px 0;border-radius:14px;overflow:hidden;
+                 box-shadow:0 4px 18px rgba(0,0,0,.1)}
+  .grafico-titulo{background:var(--rail);color:var(--gold);
+                   font-family:monospace;font-size:.68rem;letter-spacing:3px;
+                   padding:9px 18px}
+  .grafico-body{background:white;padding:16px 12px}
+
+  /* CONCEPTO */
+  .concepto{background:#fff8e1;border-left:5px solid var(--gold);
+             padding:16px 20px;border-radius:0 12px 12px 0;margin:22px 0;
+             font-size:.9rem}
+  .concepto table{width:100%;border-collapse:collapse;margin-top:10px;font-size:.85rem}
+  .concepto th{background:var(--cream);padding:7px 10px;text-align:left;
+                font-family:monospace;font-size:.7rem;letter-spacing:1px}
+  .concepto td{padding:7px 10px;border-top:1px solid #e8dcc8}
+  .concepto ul{padding-left:18px;line-height:2}
+
+  /* PREGUNTAS */
+  .preguntas{background:var(--rail);border-radius:14px;padding:28px;margin:28px 0}
+  .preguntas h3{color:var(--gold);font-size:1.1rem;margin-bottom:16px}
+  .preg-item{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.11);
+              border-radius:10px;padding:14px 18px;margin-bottom:10px;
+              color:#ddd;font-size:.88rem;line-height:1.65}
+  .preg-num{font-family:monospace;font-size:.64rem;letter-spacing:2px;
+             color:var(--gold);margin-bottom:5px}
+
+  /* RESUMEN */
+  .resumen{background:var(--cream);border-radius:14px;padding:32px;margin:36px 0}
+  .resumen h2{font-size:1.5rem;color:var(--rail);margin-bottom:18px}
+  .resumen table{width:100%;border-collapse:collapse;font-size:.85rem}
+  .resumen th{background:var(--rail);color:var(--gold);padding:9px 12px;
+               font-family:monospace;font-size:.68rem;letter-spacing:1px;text-align:left}
+  .resumen td{padding:9px 12px;border-bottom:1px solid #e0d4c0}
+  .resumen tr:nth-child(even) td{background:rgba(0,0,0,.03)}
+  .reglas{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+           gap:10px;margin-top:22px}
+  .regla{background:white;border-radius:8px;padding:12px 14px;
+          font-size:.86rem;border-top:3px solid var(--gold)}
+
+  /* CIERRE */
+  .cierre{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white;
+           padding:48px 8vw;margin-top:56px}
+  .cierre blockquote{font-size:1.3rem;font-style:italic;color:var(--gold);
+                      margin-bottom:18px;line-height:1.4}
+  .cierre p{color:#c8c8d8;max-width:580px;line-height:1.8;margin-bottom:10px}
+  .cierre-meta{font-family:monospace;font-size:9px;color:#6677aa;margin-top:20px;
+                padding-top:18px;border-top:1px solid rgba(255,255,255,.1)}
+
+  footer{background:#0f0a05;padding:26px 8vw;display:flex;
+          justify-content:space-between;align-items:center;flex-wrap:wrap;
+          gap:14px;font-family:monospace;font-size:.68rem;color:#5a4a3a}
+  .footer-brand{font-size:1.05rem;color:var(--gold);font-style:italic;font-family:Georgia,serif}
+
+  @media(max-width:600px){
+    body{font-size:15px}.hero{padding:44px 5vw 36px}.article{padding:36px 14px}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="hero-tag">FÍSICA 10° · CINEMÁTICA · ANÁLISIS GRÁFICO DEL MOVIMIENTO</span>
+  <h1>Leer el movimiento<br><em>sin ecuaciones</em></h1>
+  <p>Cómo los gráficos <strong style="color:white">x–t</strong>, <strong style="color:white">v–t</strong> y <strong style="color:white">a–t</strong> revelan todo lo que necesitas saber sobre el movimiento de un cuerpo.</p>
+  <div class="hero-meta">Lic. Hayzar Hernández Bustos · Corporación Universitaria Reformada · Barranquilla, Colombia</div>
+</header>
+
+<section class="objetivos">
+  <h2>🎯 Objetivos de aprendizaje</h2>
+  <p>Al finalizar esta lectura serás capaz de:</p>
+  <div class="obj-grid">
+    <div class="obj-item"><div class="obj-num">OBJ 01</div>Interpretar un gráfico x–t para determinar la velocidad como <strong>pendiente</strong>.</div>
+    <div class="obj-item"><div class="obj-num">OBJ 02</div>Calcular el desplazamiento en un gráfico v–t como el <strong>área bajo la curva</strong>.</div>
+    <div class="obj-item"><div class="obj-num">OBJ 03</div>Determinar la aceleración como la <strong>pendiente</strong> del gráfico v–t.</div>
+    <div class="obj-item"><div class="obj-num">OBJ 04</div>Distinguir entre <strong>rapidez media</strong> y <strong>velocidad media</strong>.</div>
+    <div class="obj-item"><div class="obj-num">OBJ 05</div>Relacionar x–t, v–t y a–t para describir el movimiento completo.</div>
+    <div class="obj-item"><div class="obj-num">OBJ 06</div>Identificar reposo, MRU y MRUA por la <strong>forma de las curvas</strong>.</div>
+  </div>
+</section>
+
+<article class="article">
+
+<!-- ══════════════════════════════ SECCIÓN 1 ══════════════════════════════ -->
+<section class="seccion">
+  <span class="seccion-tag">Sección 1 · pAG-1</span>
+  <h2>El automóvil en la carretera</h2>
+  <p class="seccion-sub">Gráfico x–t por tramos rectos — lectura de pendientes</p>
+
+  <div class="dialogo">
+    <span class="dialogo-tag">DIÁLOGO SOCRÁTICO — ESCENA 1</span>
+    <div class="speech"><div class="sp-av av-p">P</div><div class="bubble">Daniel, mira el gráfico. Hay tres tramos. ¿Qué diferencia notas en cada uno?</div></div>
+    <div class="speech right"><div class="sp-av av-d">D</div><div class="bubble">El primero baja, el segundo sube y el tercero es horizontal.</div></div>
+    <div class="speech"><div class="sp-av av-p">P</div><div class="bubble">Bien. Tradúcelo al movimiento: ¿qué hace el automóvil en cada tramo?</div></div>
+    <div class="speech right"><div class="sp-av av-d">D</div><div class="bubble">En el primero la posición disminuye: se aleja. En el segundo regresa. Y en el tercero está quieto: la posición no cambia.</div></div>
+    <div class="speech"><div class="sp-av av-p">P</div><div class="bubble">¿Cuál tramo tiene mayor velocidad? ¿Cómo lo sabes <em>sin calcular nada</em>?</div></div>
+    <div class="speech right"><div class="sp-av av-d">D</div><div class="bubble">El primero, porque la recta es más inclinada. La pendiente es mayor en valor absoluto.</div></div>
+  </div>
+
+  <div class="grafico-wrap">
+    <div class="grafico-titulo">GRÁFICO x–t — AUTOMÓVIL EN LA CARRETERA (pAG-1)</div>
+    <div class="grafico-body"><svg viewBox="0 0 560 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:580px;height:auto;display:block;margin:0 auto">
+  <rect width="560" height="340" fill="#eef4ff" rx="8"/>
+  <line x1="55.0" y1="18" x2="55.0" y2="295" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="124.3" y1="18" x2="124.3" y2="295" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="193.6" y1="18" x2="193.6" y2="295" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="262.9" y1="18" x2="262.9" y2="295" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="332.1" y1="18" x2="332.1" y2="295" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="401.4" y1="18" x2="401.4" y2="295" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="470.7" y1="18" x2="470.7" y2="295" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="540.0" y1="18" x2="540.0" y2="295" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="55" y1="295.0" x2="540" y2="295.0" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="55" y1="255.4" x2="540" y2="255.4" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="55" y1="215.9" x2="540" y2="215.9" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="55" y1="176.3" x2="540" y2="176.3" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="55" y1="136.7" x2="540" y2="136.7" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="55" y1="97.1" x2="540" y2="97.1" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="55" y1="57.6" x2="540" y2="57.6" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="55" y1="18.0" x2="540" y2="18.0" stroke="#a8c8f0" stroke-width="0.8"/>
+  <line x1="55" y1="18" x2="55" y2="295" stroke="#333" stroke-width="1.5"/>
+  <line x1="55" y1="295" x2="540" y2="295" stroke="#333" stroke-width="1.5"/>
+  <text x="55.0" y="311" text-anchor="middle" font-size="11" fill="#444">0</text>
+<text x="124.3" y="311" text-anchor="middle" font-size="11" fill="#444">1</text>
+<text x="193.6" y="311" text-anchor="middle" font-size="11" fill="#444">2</text>
+<text x="262.9" y="311" text-anchor="middle" font-size="11" fill="#444">3</text>
+<text x="332.1" y="311" text-anchor="middle" font-size="11" fill="#444">4</text>
+<text x="401.4" y="311" text-anchor="middle" font-size="11" fill="#444">5</text>
+<text x="470.7" y="311" text-anchor="middle" font-size="11" fill="#444">6</text>
+<text x="540.0" y="311" text-anchor="middle" font-size="11" fill="#444">7</text>
+<text x="47" y="299.0" text-anchor="end" font-size="11" fill="#444">0</text>
+<text x="47" y="259.4" text-anchor="end" font-size="11" fill="#444">1</text>
+<text x="47" y="219.9" text-anchor="end" font-size="11" fill="#444">2</text>
+<text x="47" y="180.3" text-anchor="end" font-size="11" fill="#444">3</text>
+<text x="47" y="140.7" text-anchor="end" font-size="11" fill="#444">4</text>
+<text x="47" y="101.1" text-anchor="end" font-size="11" fill="#444">5</text>
+<text x="47" y="61.6" text-anchor="end" font-size="11" fill="#444">6</text>
+<text x="47" y="22.0" text-anchor="end" font-size="11" fill="#444">7</text>
+  <text x="28" y="170" text-anchor="middle" font-size="12" fill="#333" font-weight="bold" transform="rotate(-90,28,170)">Desplazamiento (m)</text>
+  <text x="298" y="335" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">Tiempo (s)</text>
+  <path d="M 55.0 18.0 L 193.57 255.43" fill="none" stroke="#c0392b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 193.57 255.43 L 332.14 136.71" fill="none" stroke="#1a7a6e" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 332.14 136.71 L 540.0 136.71" fill="none" stroke="#1a4a8a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8,4"/>
+  <circle cx="55.0" cy="18.0" r="5" fill="#1a1a1a"/><circle cx="193.57" cy="255.43" r="5" fill="#1a1a1a"/><circle cx="332.14" cy="136.71" r="5" fill="#1a1a1a"/><circle cx="540.0" cy="136.71" r="5" fill="#1a1a1a"/>
+  <rect x="80.29" y="132.5" width="88" height="28" rx="5" fill="rgba(255,240,240,0.92)" stroke="#c0392b" stroke-width="1"/>
+  <text x="124.29" y="150.5" text-anchor="middle" font-size="10.5" fill="#c0392b" font-weight="bold">v₁ = −3 m/s</text>
+  <rect x="216.86" y="183.94" width="92" height="28" rx="5" fill="rgba(240,255,244,0.92)" stroke="#1a7a6e" stroke-width="1"/>
+  <text x="262.86" y="201.94" text-anchor="middle" font-size="10.5" fill="#1a7a6e" font-weight="bold">v₂ = +1.5 m/s</text>
+  <rect x="379.29" y="88.97" width="78" height="28" rx="5" fill="rgba(238,244,255,0.92)" stroke="#1a4a8a" stroke-width="1"/>
+  <text x="415.29" y="106.97" text-anchor="middle" font-size="10.5" fill="#1a4a8a" font-weight="bold">REPOSO</text>
+</svg></div>
+  </div>
+
+  <div class="concepto">
+    <strong>💡 Velocidad media vs. Rapidez media:</strong>
+    <table>
+      <tr><th>Concepto</th><th>Definición</th><th>En el gráfico x–t</th></tr>
+      <tr><td><strong>Velocidad media</strong></td><td>v̄ = Δx / Δt</td><td>Pendiente de la recta inicio–fin</td></tr>
+      <tr><td><strong>Rapidez media</strong></td><td>r̄ = distancia total / Δt</td><td>Suma de tramos ÷ tiempo</td></tr>
+    </table>
+    <p style="margin-top:10px">⚠️ Son iguales <strong>solo si</strong> el objeto nunca invierte su dirección.</p>
+  </div>
+
+  <div class="preguntas">
+    <h3>📝 Preguntas — pAG-1</h3>
+    <div class="preg-item"><div class="preg-num">A</div>Lista los instantes en que el automóvil <strong>no se está moviendo</strong>.</div>
+    <div class="preg-item"><div class="preg-num">B</div>¿Cuál es el <strong>desplazamiento total</strong> durante el intervalo 0–7 s?</div>
+    <div class="preg-item"><div class="preg-num">C</div>Lista los instantes en que el objeto se mueve a su <strong>máxima rapidez</strong>.</div>
+    <div class="preg-item"><div class="preg-num">D</div>¿Cuál fue la <strong>máxima rapidez media</strong> y en qué intervalo de tiempo?</div>
+    <div class="preg-item"><div class="preg-num">E</div>¿Cuál fue la <strong>máxima velocidad media</strong> y en qué intervalo de tiempo?</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ SECCIÓN 2 ══════════════════════════════ -->
+<section class="seccion">
+  <span class="seccion-tag">Sección 2 · pAG-12</span>
+  <h2>La criatura Glim</h2>
+  <p class="seccion-sub">Gráfico x–t con curvas — valores negativos y cambios de dirección</p>
+
+  <div class="dialogo">
+    <span class="dialogo-tag">DIÁLOGO SOCRÁTICO — ESCENA 2</span>
+    <div class="speech"><div class="sp-av av-p">P</div><div class="bubble">Ahora el gráfico tiene curvas. ¿Eso cambia cómo lees la velocidad?</div></div>
+    <div class="speech right"><div class="sp-av av-d">D</div><div class="bubble">La pendiente ya no es constante. Cada punto tiene una pendiente diferente. La velocidad cambia en todo momento.</div></div>
+    <div class="speech"><div class="sp-av av-p">P</div><div class="bubble">Glim empieza en posición negativa. ¿Qué significa eso?</div></div>
+    <div class="speech right"><div class="sp-av av-d">D</div><div class="bubble">Que al inicio estaba al lado negativo del punto de referencia. Cuando cruza el eje x, Glim pasa exactamente por el origen.</div></div>
+    <div class="speech"><div class="sp-av av-p">P</div><div class="bubble">Al final hay un tramo recto horizontal. ¿Qué hace Glim ahí?</div></div>
+    <div class="speech right"><div class="sp-av av-d">D</div><div class="bubble">Está en reposo. Pendiente cero, velocidad cero.</div></div>
+  </div>
+
+  <div class="grafico-wrap">
+    <div class="grafico-titulo">GRÁFICO x–t — LA CRIATURA GLIM (pAG-12)</div>
+    <div class="grafico-body"><svg viewBox="0 0 560 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:580px;height:auto;display:block;margin:0 auto">
+  <rect width="560" height="340" fill="#e8f4ff" rx="8"/>
+  <line x1="55.0" y1="18" x2="55.0" y2="295" stroke="#88b8e8" stroke-width="0.8"/>
+<line x1="124.3" y1="18" x2="124.3" y2="295" stroke="#88b8e8" stroke-width="0.8"/>
+<line x1="193.6" y1="18" x2="193.6" y2="295" stroke="#88b8e8" stroke-width="0.8"/>
+<line x1="262.9" y1="18" x2="262.9" y2="295" stroke="#88b8e8" stroke-width="0.8"/>
+<line x1="332.1" y1="18" x2="332.1" y2="295" stroke="#88b8e8" stroke-width="0.8"/>
+<line x1="401.4" y1="18" x2="401.4" y2="295" stroke="#88b8e8" stroke-width="0.8"/>
+<line x1="470.7" y1="18" x2="470.7" y2="295" stroke="#88b8e8" stroke-width="0.8"/>
+<line x1="540.0" y1="18" x2="540.0" y2="295" stroke="#88b8e8" stroke-width="0.8"/>
+<line x1="55" y1="295.0" x2="540" y2="295.0" stroke="#88b8e8" stroke-width="0.8"/>
+<line x1="55" y1="255.4" x2="540" y2="255.4" stroke="#88b8e8" stroke-width="0.8"/>
+<line x1="55" y1="215.9" x2="540" y2="215.9" stroke="#88b8e8" stroke-width="0.8"/>
+<line x1="55" y1="176.3" x2="540" y2="176.3" stroke="#88b8e8" stroke-width="0.8"/>
+<line x1="55" y1="136.7" x2="540" y2="136.7" stroke="#88b8e8" stroke-width="0.8"/>
+<line x1="55" y1="97.1" x2="540" y2="97.1" stroke="#88b8e8" stroke-width="0.8"/>
+<line x1="55" y1="57.6" x2="540" y2="57.6" stroke="#88b8e8" stroke-width="0.8"/>
+<line x1="55" y1="18.0" x2="540" y2="18.0" stroke="#88b8e8" stroke-width="0.8"/>
+  <line x1="55" y1="176.3" x2="540" y2="176.3" stroke="#333" stroke-width="1.5"/>
+  <line x1="55" y1="18" x2="55" y2="295" stroke="#333" stroke-width="1.5"/>
+  <line x1="55" y1="295" x2="540" y2="295" stroke="#333" stroke-width="1.5"/>
+  <text x="55.0" y="311" text-anchor="middle" font-size="11" fill="#444">0</text>
+<text x="124.3" y="311" text-anchor="middle" font-size="11" fill="#444">1</text>
+<text x="193.6" y="311" text-anchor="middle" font-size="11" fill="#444">2</text>
+<text x="262.9" y="311" text-anchor="middle" font-size="11" fill="#444">3</text>
+<text x="332.1" y="311" text-anchor="middle" font-size="11" fill="#444">4</text>
+<text x="401.4" y="311" text-anchor="middle" font-size="11" fill="#444">5</text>
+<text x="470.7" y="311" text-anchor="middle" font-size="11" fill="#444">6</text>
+<text x="540.0" y="311" text-anchor="middle" font-size="11" fill="#444">7</text>
+<text x="47" y="299.0" text-anchor="end" font-size="11" fill="#444">-3</text>
+<text x="47" y="259.4" text-anchor="end" font-size="11" fill="#444">-2</text>
+<text x="47" y="219.9" text-anchor="end" font-size="11" fill="#444">-1</text>
+<text x="47" y="180.3" text-anchor="end" font-size="11" fill="#444">0</text>
+<text x="47" y="140.7" text-anchor="end" font-size="11" fill="#444">1</text>
+<text x="47" y="101.1" text-anchor="end" font-size="11" fill="#444">2</text>
+<text x="47" y="61.6" text-anchor="end" font-size="11" fill="#444">3</text>
+<text x="47" y="22.0" text-anchor="end" font-size="11" fill="#444">4</text>
+  <text x="28" y="170" text-anchor="middle" font-size="12" fill="#333" font-weight="bold" transform="rotate(-90,28,170)">Desplazamiento (m)</text>
+  <text x="298" y="335" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">Tiempo (s)</text>
+  <path d="M 55.0 295.0 L 57.63 289.78 L 60.27 284.67 L 62.9 279.61 L 65.53 274.66 L 68.16 269.75 L 70.8 264.97 L 73.43 260.22 L 76.06 255.51 L 78.7 250.88 L 81.33 246.33 L 83.96 241.82 L 86.59 237.34 L 89.23 232.91 L 91.86 228.52 L 94.49 224.17 L 97.13 219.85 L 99.76 215.58 L 102.39 211.35 L 105.02 207.07 L 107.59 202.88 L 110.22 198.64 L 112.85 194.45 L 115.49 190.25 L 118.12 186.1 L 120.75 181.9 L 123.38 177.67 L 126.02 173.48 L 128.65 169.28 L 131.28 165.09 L 133.92 160.93 L 136.55 156.74 L 139.18 152.62 L 141.81 148.47 L 144.45 144.35 L 147.08 140.28 L 149.71 136.24 L 152.35 132.2 L 154.98 128.21 L 157.61 124.21 L 160.25 120.29 L 162.88 116.37 L 165.51 112.54 L 168.14 108.7 L 170.78 104.94 L 173.41 101.22 L 176.04 97.54 L 178.68 93.9 L 181.31 90.34 L 183.94 86.81 L 186.57 83.33 L 189.21 79.93 L 191.84 76.57 L 194.47 73.32 L 197.11 70.08 L 199.74 66.95 L 202.37 63.86 L 205.0 60.86 L 207.64 57.97 L 210.27 55.12 L 212.83 52.35 L 215.47 49.66 L 218.1 47.05 L 220.73 44.55 L 223.36 42.1 L 226.0 39.76 L 228.63 37.55 L 231.26 35.41 L 233.9 33.35 L 236.53 31.41 L 239.16 29.55 L 241.79 27.85 L 244.43 26.19 L 247.06 24.69 L 249.69 23.26 L 252.33 22.0 L 254.96 20.81 L 257.59 19.74 L 260.22 18.83 L 262.86 18.0 L 262.86 18.0 L 266.39 17.53 L 269.92 17.25 L 273.46 17.17 L 276.92 17.33 L 280.46 17.64 L 283.99 18.16 L 287.52 18.83 L 291.06 19.66 L 294.59 20.61 L 298.05 21.72 L 301.59 22.95 L 305.12 24.25 L 308.65 25.68 L 312.19 27.18 L 315.72 28.8 L 319.26 30.46 L 322.72 32.17 L 326.25 33.91 L 329.79 35.69 L 333.32 37.51 L 336.85 39.33 L 340.39 41.15 L 343.85 42.97 L 347.39 44.75 L 350.92 46.49 L 354.45 48.19 L 357.99 49.82 L 361.52 51.4 L 365.05 52.9 L 368.52 54.33 L 372.05 55.79 L 375.58 57.29 L 379.12 58.84 L 382.65 60.42 L 386.19 62.04 L 389.72 63.7 L 393.18 65.37 L 396.72 67.03 L 400.25 68.73 L 403.78 70.43 L 407.32 72.13 L 410.85 73.84 L 414.32 75.5 L 417.85 77.2 L 421.38 78.86 L 424.92 80.48 L 428.45 82.07 L 431.98 83.65 L 435.52 85.15 L 438.98 86.66 L 442.52 88.08 L 446.05 89.47 L 449.58 90.77 L 453.12 92.04 L 456.65 93.23 L 460.11 94.33 L 463.65 95.36 L 467.18 96.27 L 470.71 97.14 L 470.71 97.14 L 540.0 97.14" fill="none" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="55.0" cy="295.0" r="5" fill="#1a1a1a"/><circle cx="124.29" cy="176.29" r="5" fill="#1a1a1a"/><circle cx="262.86" cy="18.0" r="5" fill="#1a1a1a"/><circle cx="470.71" cy="97.14" r="5" fill="#1a1a1a"/><circle cx="540.0" cy="97.14" r="5" fill="#1a1a1a"/>
+  <rect x="70.29" y="142.5" width="108" height="24" rx="5" fill="rgba(240,255,244,0.92)" stroke="#1a7a6e" stroke-width="1"/>
+  <text x="124.29" y="162.5" text-anchor="middle" font-size="10" fill="#1a7a6e" font-weight="bold">Cruza origen ≈ t=1 s</text>
+  <rect x="270.86" y="4.0" width="90" height="24" rx="5" fill="rgba(255,240,240,0.92)" stroke="#c0392b" stroke-width="1"/>
+  <text x="315.86" y="24.0" text-anchor="middle" font-size="10" fill="#c0392b" font-weight="bold">Máx: t=3s, x=4m</text>
+  <rect x="467.36" y="63.36" width="76" height="24" rx="5" fill="rgba(238,244,255,0.92)" stroke="#1a4a8a" stroke-width="1"/>
+  <text x="505.36" y="83.36" text-anchor="middle" font-size="10" fill="#1a4a8a" font-weight="bold">REPOSO 6–7s</text>
+</svg></div>
+  </div>
+
+  <div class="concepto">
+    <strong>💡 Curvas en x–t:</strong>
+    <ul>
+      <li>Curva <strong>cóncava hacia arriba</strong> (⌣) → velocidad <strong>aumenta</strong> → aceleración positiva</li>
+      <li>Curva <strong>cóncava hacia abajo</strong> (⌢) → velocidad <strong>disminuye</strong> → aceleración negativa</li>
+      <li>La <strong>pendiente de la tangente</strong> en cada punto = velocidad <strong>instantánea</strong></li>
+    </ul>
+  </div>
+
+  <div class="preguntas">
+    <h3>📝 Preguntas — pAG-12 (Glim)</h3>
+    <div class="preg-item"><div class="preg-num">A</div>¿En qué segundo exacto pasó Glim por el punto inicial (x = 0)?</div>
+    <div class="preg-item"><div class="preg-num">B</div>¿Cuándo estuvo Glim más lejos del punto inicial y cuánto fue esa distancia?</div>
+    <div class="preg-item"><div class="preg-num">C</div>¿En qué intervalo Glim estuvo <strong>regresando</strong> hacia atrás?</div>
+    <div class="preg-item"><div class="preg-num">D</div>¿En qué momentos se quedó <strong>quieto</strong>?</div>
+    <div class="preg-item"><div class="preg-num">E–F</div>Calcula la <strong>rapidez media</strong> y la <strong>velocidad media</strong> durante los 7 segundos.</div>
+    <div class="preg-item"><div class="preg-num">G</div>Identifica los intervalos donde Glim estuvo <strong>acelerando</strong> y <strong>desacelerando</strong>.</div>
+    <div class="preg-item"><div class="preg-num">K</div>Describe detalladamente el movimiento de Glim durante los 7 segundos.</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ SECCIÓN 3 ══════════════════════════════ -->
+<section class="seccion">
+  <span class="seccion-tag">Sección 3 · pAG-4</span>
+  <h2>El automóvil que frena</h2>
+  <p class="seccion-sub">Gráfico v–t — pendiente = aceleración, área = desplazamiento</p>
+
+  <div class="dialogo">
+    <span class="dialogo-tag">DIÁLOGO SOCRÁTICO — ESCENA 3</span>
+    <div class="speech"><div class="sp-av av-p">P</div><div class="bubble">La recta cruza el eje horizontal. ¿Qué ocurre en ese instante?</div></div>
+    <div class="speech right"><div class="sp-av av-d">D</div><div class="bubble">La velocidad es cero: el automóvil se detiene. Luego la velocidad es negativa — cambió de dirección.</div></div>
+    <div class="speech"><div class="sp-av av-p">P</div><div class="bubble">El área del triángulo entre la recta y el eje en 0–3 s, ¿qué representa?</div></div>
+    <div class="speech right"><div class="sp-av av-d">D</div><div class="bubble">El desplazamiento. Área = ½ × 3 × 3 = 4.5 m. Positivo porque está sobre el eje.</div></div>
+    <div class="speech"><div class="sp-av av-p">P</div><div class="bubble">¿Y la pendiente de esta recta qué representa?</div></div>
+    <div class="speech right"><div class="sp-av av-d">D</div><div class="bubble">La aceleración: a = Δv/Δt = (−4−3)/7 = −1 m/s². Constante en todo el intervalo.</div></div>
+  </div>
+
+  <div class="grafico-wrap">
+    <div class="grafico-titulo">GRÁFICO v–t — AUTOMÓVIL CON DESACELERACIÓN CONSTANTE (pAG-4)</div>
+    <div class="grafico-body"><svg viewBox="0 0 560 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:580px;height:auto;display:block;margin:0 auto">
+  <rect width="560" height="340" fill="#fff8ee" rx="8"/>
+  <line x1="55.0" y1="18" x2="55.0" y2="295" stroke="#f0c080" stroke-width="0.8"/>
+<line x1="124.3" y1="18" x2="124.3" y2="295" stroke="#f0c080" stroke-width="0.8"/>
+<line x1="193.6" y1="18" x2="193.6" y2="295" stroke="#f0c080" stroke-width="0.8"/>
+<line x1="262.9" y1="18" x2="262.9" y2="295" stroke="#f0c080" stroke-width="0.8"/>
+<line x1="332.1" y1="18" x2="332.1" y2="295" stroke="#f0c080" stroke-width="0.8"/>
+<line x1="401.4" y1="18" x2="401.4" y2="295" stroke="#f0c080" stroke-width="0.8"/>
+<line x1="470.7" y1="18" x2="470.7" y2="295" stroke="#f0c080" stroke-width="0.8"/>
+<line x1="540.0" y1="18" x2="540.0" y2="295" stroke="#f0c080" stroke-width="0.8"/>
+<line x1="55" y1="295.0" x2="540" y2="295.0" stroke="#f0c080" stroke-width="0.8"/>
+<line x1="55" y1="255.4" x2="540" y2="255.4" stroke="#f0c080" stroke-width="0.8"/>
+<line x1="55" y1="215.9" x2="540" y2="215.9" stroke="#f0c080" stroke-width="0.8"/>
+<line x1="55" y1="176.3" x2="540" y2="176.3" stroke="#f0c080" stroke-width="0.8"/>
+<line x1="55" y1="136.7" x2="540" y2="136.7" stroke="#f0c080" stroke-width="0.8"/>
+<line x1="55" y1="97.1" x2="540" y2="97.1" stroke="#f0c080" stroke-width="0.8"/>
+<line x1="55" y1="57.6" x2="540" y2="57.6" stroke="#f0c080" stroke-width="0.8"/>
+<line x1="55" y1="18.0" x2="540" y2="18.0" stroke="#f0c080" stroke-width="0.8"/>
+  <line x1="55" y1="136.7" x2="540" y2="136.7" stroke="#333" stroke-width="1.5"/>
+  <polygon points="55.0,18.0 262.86,136.71 55.0,136.71" fill="rgba(26,122,110,0.2)"/>
+  <polygon points="262.86,136.71 540.0,295.0 540.0,136.71" fill="rgba(192,57,43,0.2)"/>
+  <line x1="55" y1="18" x2="55" y2="295" stroke="#333" stroke-width="1.5"/>
+  <line x1="55" y1="295" x2="540" y2="295" stroke="#333" stroke-width="1.5"/>
+  <text x="55.0" y="311" text-anchor="middle" font-size="11" fill="#444">0</text>
+<text x="124.3" y="311" text-anchor="middle" font-size="11" fill="#444">1</text>
+<text x="193.6" y="311" text-anchor="middle" font-size="11" fill="#444">2</text>
+<text x="262.9" y="311" text-anchor="middle" font-size="11" fill="#444">3</text>
+<text x="332.1" y="311" text-anchor="middle" font-size="11" fill="#444">4</text>
+<text x="401.4" y="311" text-anchor="middle" font-size="11" fill="#444">5</text>
+<text x="470.7" y="311" text-anchor="middle" font-size="11" fill="#444">6</text>
+<text x="540.0" y="311" text-anchor="middle" font-size="11" fill="#444">7</text>
+<text x="47" y="299.0" text-anchor="end" font-size="11" fill="#444">-4</text>
+<text x="47" y="259.4" text-anchor="end" font-size="11" fill="#444">-3</text>
+<text x="47" y="219.9" text-anchor="end" font-size="11" fill="#444">-2</text>
+<text x="47" y="180.3" text-anchor="end" font-size="11" fill="#444">-1</text>
+<text x="47" y="140.7" text-anchor="end" font-size="11" fill="#444">0</text>
+<text x="47" y="101.1" text-anchor="end" font-size="11" fill="#444">1</text>
+<text x="47" y="61.6" text-anchor="end" font-size="11" fill="#444">2</text>
+<text x="47" y="22.0" text-anchor="end" font-size="11" fill="#444">3</text>
+  <text x="28" y="170" text-anchor="middle" font-size="12" fill="#333" font-weight="bold" transform="rotate(-90,28,170)">Velocidad (m/s)</text>
+  <text x="298" y="335" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">Tiempo (s)</text>
+  <path d="M 55.0 18.0 L 540.0 295.0" fill="none" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="55.0" cy="18.0" r="5" fill="#1a1a1a"/>
+  <circle cx="262.86" cy="136.71" r="7" fill="#c0392b"/>
+  <circle cx="540.0" cy="295.0" r="5" fill="#1a1a1a"/>
+  <rect x="88.13999999999999" y="91.06" width="100" height="24" rx="5" fill="rgba(240,255,244,0.92)" stroke="#1a7a6e" stroke-width="1"/>
+  <text x="138.14" y="111.06" text-anchor="middle" font-size="10" fill="#1a7a6e" font-weight="bold">½·3·3 = 4.5 m  (+)</text>
+  <rect x="355.43" y="221.64" width="92" height="24" rx="5" fill="rgba(255,240,240,0.92)" stroke="#c0392b" stroke-width="1"/>
+  <text x="401.43" y="241.64" text-anchor="middle" font-size="10" fill="#c0392b" font-weight="bold">½·4·4 = 8 m  (−)</text>
+  <rect x="71.79" y="261.21" width="164" height="24" rx="5" fill="rgba(255,248,232,0.95)" stroke="#e67e22" stroke-width="1"/>
+  <text x="153.79000000000002" y="281.21" text-anchor="middle" font-size="10" fill="#e67e22" font-weight="bold">a = −7/7 = −1 m/s²</text>
+  <rect x="202.86" y="106.89" width="120" height="24" rx="5" fill="rgba(238,244,255,0.92)" stroke="#1a4a8a" stroke-width="1"/>
+  <text x="262.86" y="126.89" text-anchor="middle" font-size="10" fill="#1a4a8a" font-weight="bold">Cambio dirección t=3s</text>
+</svg></div>
+  </div>
+
+  <div class="preguntas">
+    <h3>📝 Preguntas — pAG-4</h3>
+    <div class="preg-item"><div class="preg-num">A</div>¿Cuántas veces el objeto <strong>cambia de dirección</strong>?</div>
+    <div class="preg-item"><div class="preg-num">B</div>¿Cuál es la <strong>aceleración</strong> representada en este gráfico?</div>
+    <div class="preg-item"><div class="preg-num">C</div>¿Cuál es el <strong>desplazamiento</strong> durante el intervalo 0–3 s?</div>
+    <div class="preg-item"><div class="preg-num">D</div>¿Cuál es la <strong>distancia recorrida</strong> durante el intervalo 0–7 s?</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ SECCIÓN 4 ══════════════════════════════ -->
+<section class="seccion">
+  <span class="seccion-tag">Sección 4 · pAG-5</span>
+  <h2>Movimiento curvilíneo</h2>
+  <p class="seccion-sub">Gráfico x–t con spline suave — tangentes, máximos y velocidad instantánea</p>
+
+  <div class="dialogo">
+    <span class="dialogo-tag">DIÁLOGO SOCRÁTICO — ESCENA 4</span>
+    <div class="speech"><div class="sp-av av-p">P</div><div class="bubble">En t = 3 s hay un punto especial. ¿Qué ocurre ahí?</div></div>
+    <div class="speech right"><div class="sp-av av-d">D</div><div class="bubble">Es el punto más alto. La curva cambia de subir a bajar. La pendiente era positiva y ahora negativa. En ese instante exacto la pendiente es cero.</div></div>
+    <div class="speech"><div class="sp-av av-p">P</div><div class="bubble">¿Y si la pendiente es cero, qué significa para la velocidad en t = 3 s?</div></div>
+    <div class="speech right"><div class="sp-av av-d">D</div><div class="bubble">¡La velocidad es cero! El automóvil se detiene instantáneamente antes de cambiar de dirección.</div></div>
+    <div class="speech"><div class="sp-av av-p">P</div><div class="bubble">De t=1 a t=5 el desplazamiento fue cero y la velocidad media fue cero, ¡pero el objeto sí se movió! ¿Hay contradicción?</div></div>
+    <div class="speech right"><div class="sp-av av-d">D</div><div class="bubble">No. Regresó al mismo punto, pero la distancia recorrida no es cero: subió 3 m y bajó 3 m. Desplazamiento y distancia son conceptos distintos.</div></div>
+  </div>
+
+  <div class="grafico-wrap">
+    <div class="grafico-titulo">GRÁFICO x–t — MOVIMIENTO CURVILÍNEO (pAG-5)</div>
+    <div class="grafico-body"><svg viewBox="0 0 560 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:580px;height:auto;display:block;margin:0 auto">
+  <rect width="560" height="340" fill="#eef4ff" rx="8"/>
+  <line x1="55.0" y1="18" x2="55.0" y2="295" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="124.3" y1="18" x2="124.3" y2="295" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="193.6" y1="18" x2="193.6" y2="295" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="262.9" y1="18" x2="262.9" y2="295" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="332.1" y1="18" x2="332.1" y2="295" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="401.4" y1="18" x2="401.4" y2="295" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="470.7" y1="18" x2="470.7" y2="295" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="540.0" y1="18" x2="540.0" y2="295" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="55" y1="295.0" x2="540" y2="295.0" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="55" y1="255.4" x2="540" y2="255.4" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="55" y1="215.9" x2="540" y2="215.9" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="55" y1="176.3" x2="540" y2="176.3" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="55" y1="136.7" x2="540" y2="136.7" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="55" y1="97.1" x2="540" y2="97.1" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="55" y1="57.6" x2="540" y2="57.6" stroke="#a8c8f0" stroke-width="0.8"/>
+<line x1="55" y1="18.0" x2="540" y2="18.0" stroke="#a8c8f0" stroke-width="0.8"/>
+  <line x1="55" y1="18" x2="55" y2="295" stroke="#333" stroke-width="1.5"/>
+  <line x1="55" y1="295" x2="540" y2="295" stroke="#333" stroke-width="1.5"/>
+  <text x="55.0" y="311" text-anchor="middle" font-size="11" fill="#444">0</text>
+<text x="124.3" y="311" text-anchor="middle" font-size="11" fill="#444">1</text>
+<text x="193.6" y="311" text-anchor="middle" font-size="11" fill="#444">2</text>
+<text x="262.9" y="311" text-anchor="middle" font-size="11" fill="#444">3</text>
+<text x="332.1" y="311" text-anchor="middle" font-size="11" fill="#444">4</text>
+<text x="401.4" y="311" text-anchor="middle" font-size="11" fill="#444">5</text>
+<text x="470.7" y="311" text-anchor="middle" font-size="11" fill="#444">6</text>
+<text x="540.0" y="311" text-anchor="middle" font-size="11" fill="#444">7</text>
+<text x="47" y="299.0" text-anchor="end" font-size="11" fill="#444">0</text>
+<text x="47" y="259.4" text-anchor="end" font-size="11" fill="#444">1</text>
+<text x="47" y="219.9" text-anchor="end" font-size="11" fill="#444">2</text>
+<text x="47" y="180.3" text-anchor="end" font-size="11" fill="#444">3</text>
+<text x="47" y="140.7" text-anchor="end" font-size="11" fill="#444">4</text>
+<text x="47" y="101.1" text-anchor="end" font-size="11" fill="#444">5</text>
+<text x="47" y="61.6" text-anchor="end" font-size="11" fill="#444">6</text>
+<text x="47" y="22.0" text-anchor="end" font-size="11" fill="#444">7</text>
+  <text x="28" y="170" text-anchor="middle" font-size="12" fill="#333" font-weight="bold" transform="rotate(-90,28,170)">Desplazamiento (m)</text>
+  <text x="298" y="335" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">Tiempo (s)</text>
+  <line x1="124.29" y1="136.71" x2="401.43" y2="136.71" stroke="#1a7a6e" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.7"/>
+  <path d="M 55.0 295.0 L 59.09 284.0 L 63.18 273.24 L 67.19 262.67 L 71.28 252.3 L 75.37 242.13 L 79.46 232.2 L 83.55 222.43 L 87.63 212.89 L 91.65 203.59 L 95.74 194.45 L 99.83 185.55 L 103.92 176.88 L 108.0 168.41 L 112.09 160.14 L 116.11 152.11 L 120.2 144.31 L 124.29 136.71 L 128.37 129.35 L 132.46 122.19 L 136.48 115.27 L 140.57 108.58 L 144.66 102.09 L 148.74 95.84 L 152.83 89.82 L 156.92 84.04 L 160.94 78.47 L 165.03 73.16 L 169.11 68.06 L 173.2 63.19 L 177.29 58.6 L 181.38 54.21 L 185.4 50.05 L 189.48 46.14 L 193.57 42.46 L 197.66 39.05 L 201.75 35.85 L 205.77 32.92 L 209.85 30.23 L 213.94 27.77 L 218.03 25.56 L 222.12 23.62 L 226.21 21.92 L 230.22 20.45 L 234.31 19.27 L 238.4 18.32 L 242.49 17.6 L 246.58 17.17 L 250.66 17.01 L 254.68 17.09 L 258.77 17.41 L 262.86 18.0 L 266.94 18.87 L 271.03 19.98 L 275.05 21.32 L 279.14 22.91 L 283.23 24.73 L 287.32 26.75 L 291.4 28.96 L 295.49 31.41 L 299.51 34.07 L 303.6 36.88 L 307.69 39.84 L 311.77 43.01 L 315.86 46.33 L 319.95 49.78 L 323.97 53.38 L 328.05 57.1 L 332.14 60.97 L 336.23 64.93 L 340.32 69.01 L 344.34 73.16 L 348.43 77.4 L 352.51 81.75 L 356.6 86.14 L 360.69 90.61 L 364.78 95.12 L 368.8 99.68 L 372.88 104.27 L 376.97 108.9 L 381.06 113.56 L 385.15 118.19 L 389.23 122.86 L 393.25 127.49 L 397.34 132.12 L 401.43 136.71 L 405.52 141.27 L 409.6 145.82 L 413.62 150.29 L 417.71 154.68 L 421.8 159.03 L 425.89 163.31 L 429.97 167.46 L 434.06 171.54 L 438.08 175.53 L 442.17 179.41 L 446.26 183.13 L 450.34 186.77 L 454.43 190.21 L 458.52 193.58 L 462.54 196.74 L 466.63 199.75 L 470.71 202.56 L 474.8 205.25 L 478.89 207.71 L 482.91 209.96 L 487.0 212.02 L 491.08 213.84 L 495.17 215.46 L 499.26 216.85 L 503.35 217.99 L 507.37 218.86 L 511.45 219.5 L 515.54 219.85 L 519.63 219.93 L 523.72 219.74 L 527.81 219.22 L 531.82 218.43 L 535.91 217.28 L 540.0 215.86" fill="none" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="207.43" y1="18.0" x2="318.29" y2="18.0" stroke="#c0392b" stroke-width="2" stroke-dasharray="6,3"/>
+  <circle cx="55.0" cy="295.0" r="5" fill="#1a1a1a"/><circle cx="124.29" cy="136.71" r="5" fill="#1a1a1a"/><circle cx="262.86" cy="18.0" r="5" fill="#1a1a1a"/><circle cx="401.43" cy="136.71" r="5" fill="#1a1a1a"/><circle cx="540.0" cy="215.86" r="5" fill="#1a1a1a"/>
+  <rect x="300.43" y="31.700000000000003" width="142" height="24" rx="5" fill="rgba(255,240,240,0.92)" stroke="#c0392b" stroke-width="1"/>
+  <text x="371.43" y="51.7" text-anchor="middle" font-size="10" fill="#c0392b" font-weight="bold">Tangente horiz. → v(3s)=0</text>
+  <rect x="120.29" y="182.07" width="136" height="36" rx="5" fill="rgba(240,255,244,0.92)" stroke="#1a7a6e" stroke-width="1"/>
+  <text x="188.29000000000002" y="198.07" text-anchor="middle" font-size="10" fill="#1a7a6e" font-weight="bold">x(1)=x(5)=4m</text>
+  <text x="188.29000000000002" y="212.07" text-anchor="middle" font-size="10" fill="#1a7a6e">Δx=0, pero sí hubo movimiento</text>
+</svg></div>
+  </div>
+
+  <div class="preguntas">
+    <h3>📝 Preguntas — pAG-5</h3>
+    <div class="preg-item"><div class="preg-num">A</div>¿Cuál es el <strong>desplazamiento total</strong> durante 0–7 s?</div>
+    <div class="preg-item"><div class="preg-num">B</div>¿Cuál es la <strong>distancia total recorrida</strong> durante 0–7 s?</div>
+    <div class="preg-item"><div class="preg-num">C</div>¿En qué instante el objeto <strong>cambia de dirección</strong>?</div>
+    <div class="preg-item"><div class="preg-num">D</div>¿Cuál es la velocidad en <strong>t = 3 s</strong>? Justifica usando el gráfico.</div>
+    <div class="preg-item"><div class="preg-num">E</div><em>"De t=1 a t=5 el objeto no se desplazó y su velocidad media fue cero, pero sí se movió."</em> Explica por qué <strong>no hay contradicción</strong>.</div>
+  </div>
+</section>
+
+<!-- RESUMEN -->
+<div class="resumen">
+  <h2>📋 Tabla resumen</h2>
+  <table>
+    <tr><th>Lo que quieres</th><th>En x–t</th><th>En v–t</th><th>En a–t</th></tr>
+    <tr><td><strong>Posición</strong></td><td>Lectura directa</td><td>—</td><td>—</td></tr>
+    <tr><td><strong>Desplazamiento</strong></td><td>Diferencia entre puntos</td><td><strong>Área bajo la curva</strong></td><td>—</td></tr>
+    <tr><td><strong>Velocidad</strong></td><td><strong>Pendiente</strong></td><td>Lectura directa</td><td>—</td></tr>
+    <tr><td><strong>Aceleración</strong></td><td>Curvatura</td><td><strong>Pendiente</strong></td><td>Lectura directa</td></tr>
+    <tr><td><strong>Reposo</strong></td><td>Recta horizontal</td><td>v = 0</td><td>—</td></tr>
+    <tr><td><strong>MRU</strong></td><td>Recta oblicua</td><td>Recta horizontal</td><td>a = 0</td></tr>
+    <tr><td><strong>MRUA</strong></td><td>Parábola</td><td>Recta oblicua</td><td>Constante ≠ 0</td></tr>
+    <tr><td><strong>Cambio dirección</strong></td><td>Máx. o mín. local</td><td>Cruce v = 0</td><td>—</td></tr>
+  </table>
+  <div class="reglas">
+    <div class="regla">🔺 Pendiente en <strong>x–t</strong> → velocidad</div>
+    <div class="regla">🔺 Pendiente en <strong>v–t</strong> → aceleración</div>
+    <div class="regla">📐 Área bajo <strong>v–t</strong> → desplazamiento</div>
+    <div class="regla">➡️ Recta horizontal → variable <strong>constante</strong></div>
+    <div class="regla">📈 Mayor inclinación → mayor <strong>rapidez</strong></div>
+    <div class="regla">🔄 Cruce v=0 → <strong>cambio de dirección</strong></div>
+    <div class="regla">⚠️ Δx = 0 <strong>≠</strong> distancia = 0</div>
+  </div>
+</div>
+
+</article>
+
+<div class="cierre">
+  <blockquote>"Un gráfico vale más que mil ecuaciones — pero solo si sabes leerlo."</blockquote>
+  <p>Los gráficos no son decoración de la física: <strong style="color:white">son la física</strong>. La pendiente es una tasa de cambio, el área es una acumulación, y la forma de la curva cuenta la historia completa del movimiento.</p>
+  <p>Cuando domines la lectura gráfica, podrás analizar cualquier movimiento con las mismas tres herramientas: <strong style="color:#d4a017">pendiente · área · forma de la curva</strong>.</p>
+  <div class="cierre-meta">Lic. Hayzar Hernández Bustos · Física 10° · Corporación Universitaria Reformada · Barranquilla, Colombia</div>
+</div>
+
+<footer>
+  <div><div class="footer-brand">Física con propósito</div><div style="margin-top:4px">Cinemática · Análisis gráfico · 10°</div></div>
+  <div style="text-align:right">github.com/HAYZAR/fisica-articulos</div>
+</footer>
+
+</body>
+</html>
